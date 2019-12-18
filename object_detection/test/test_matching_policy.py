@@ -28,8 +28,21 @@ class TestMatchingPolicy(unittest.TestCase):
                   [-1, -1],
                   [-1, -1],
                   [-1, -1]]
-        self.answer = np.asarray(answer, dtype=np.float32)
 
+        n_classes = [1, 2]
+        onehot = [[0, 0, 1],
+                  [0, 0, 0],
+                  [0, 0, 0],
+                  [0, 0, 0],
+                  [0, 0, 0],
+                  [0, 1, 0],
+                  [1, 0, 0],
+                  [0, 0, 1],
+                  [0, 0, 0],
+                  [0, 0, 0],
+                  [0, 0, 0]]
+
+        self.answer = np.asarray(answer, dtype=np.float32)
         self.sample_anchors = np.arange(n_row * 4)
         self.anchor_flag = np.ones([n_row]) * -1
         self.sample_iou = npr.rand(n_row, n_gt)

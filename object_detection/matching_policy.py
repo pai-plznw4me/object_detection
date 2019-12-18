@@ -1,8 +1,7 @@
-import numpy as np
 import tensorflow as tf
 
 
-def matching_mask_tf(iou_matrix, iou_threshold=0.7):
+def matching_mask(iou_matrix, iou_threshold=0.7):
     """
     Description:
         조건들에 합치 하는 anchor 에 대한 mask 을 생성합니다.
@@ -16,11 +15,11 @@ def matching_mask_tf(iou_matrix, iou_threshold=0.7):
         iou_matrix: Ndarray, 2D array
 
             [[anchor1_gt1 , anchor1_gt2,  anthor1_gt3],
-             [anchor2_gt1  , anchor2_gt2,  anthor2_gt3],
-             [anchor3_gt1  , anchor3_gt2,  anthor3_gt3],
-             [anchor4_gt1  , anchor4_gt2,  anthor4_gt3],
+             [anchor2_gt1 , anchor2_gt2,  anthor2_gt3],
+             [anchor3_gt1 , anchor3_gt2,  anthor3_gt3],
+             [anchor4_gt1 , anchor4_gt2,  anthor4_gt3],
                             ...
-            [anchor5_gt1  , anchor5_gt2,  anthor5_gt3]]
+             [anchor5_gt1 , anchor5_gt2,  anthor5_gt3]]
 
         iou_threshold: int, 해당 threshold 이상이면 1 을 표기
         해당 threshold 미만이면 -1 을 표기
@@ -30,7 +29,7 @@ def matching_mask_tf(iou_matrix, iou_threshold=0.7):
     Return:
         matching_mask : Ndarray, 2D array
 
-        [[1 ,   1,  -1], <=anchor1
+        [[ 1,   1,  -1], <=anchor1
          [-1 , -1,  -1], <=anchor2
          [-1 , -1,  -1], <=anchor3
                ...

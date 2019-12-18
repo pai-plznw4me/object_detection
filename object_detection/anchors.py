@@ -146,3 +146,47 @@ def generate_trainable_anchors(normalize_anchors, matching_mask):
     ret_anchor = tf.ones([n_anchors, 4], dtype=tf.float64) * -1
     ret_anchor = tf.tensor_scatter_nd_update(ret_anchor, indices, d_xywh)
     return ret_anchor
+
+
+def generate_trainble_classes(mask, gt_classes, n_classes):
+    """
+    Description:
+
+    Args:
+        mask: Tensor, 2D array
+            example:
+                [[1 , -1,  1],
+                 [1 , -1,  1],
+                 [1 , -1,  1],
+                 [1 , -1,  1],
+                     ...
+                 [1 , -1,  1]]
+
+        gt_classes: Tensor, 1D vector
+            example:
+                [2, 2, 3]
+
+
+    Return:
+        matching_mask : Tensor, 2D array
+        example:
+            [[ 2,   2,  -3],
+             [-2 , -2,  -3],
+             [-2 , -2,  -3],
+                   ...
+             [2 ,   2,   3]]
+    """
+    class_mask = mask * gt_classes
+    n_length = tf.shape(tf.constant(class_mask))[0]
+    background = tf.zeros(n_length, dtype=tf.int32)
+    background = tf.one_hot(background, n_classes)
+
+    positive_index = tf.where(class_mask.class_mask > 0)
+    positive_value = tf.gather_nd(class_mask, positive_index)
+    positive_onehot = tf.one_hot(positive_value, n_classes)
+
+    indices = positive_index[:, 0]
+    indices = tf.expand_dims(indices, axis=-1)
+    pred_classes = tf.tensor_scatter_nd_update(background, indices, positive_onehot)
+
+    return pred_classes

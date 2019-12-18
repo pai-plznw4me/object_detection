@@ -43,13 +43,14 @@ def normalize_anchors(flat_cxcywh_anchors, flat_cxcywh_gt):
 def denormalize(normalize_predictions, anchors):
     """
     :param normalize_anchors: Tensor, 4D array
-    :param anchors: Tenwor, 1D array
+    :param anchors: Tenwor, 4D array
     :return:
     """
     pred_x = normalize_predictions[:, :, :, 0]
     pred_y = normalize_predictions[:, :, :, 1]
     pred_w = normalize_predictions[:, :, :, 2]
     pred_h = normalize_predictions[:, :, :, 3]
+
     anchor_x = anchors[:, :, :, 0]
     anchor_y = anchors[:, :, :, 1]
     anchor_w = anchors[:, :, :, 2]

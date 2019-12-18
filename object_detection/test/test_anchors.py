@@ -1,7 +1,8 @@
 import unittest
-from normalize import normalize_anchors
-from anchors import generate_trainable_anchors
+from ..normalize import normalize_anchors
+from ..anchors import generate_trainable_anchors, generate_anchor
 import numpy as np
+from ..datasets import sample_dataset
 import tensorflow as tf
 
 
@@ -13,15 +14,15 @@ class TestAnchors(unittest.TestCase):
     """
     def setUp(self):
         # Test Normalization
-        anchors = np.asarray([0, 0, 5, 6,
-                                   5, 5, 10, 11,
-                                   0, 0, 7, 6], dtype=np.float32)
-        gt = np.asarray([3, 3, 8, 8, 4, 4, 8, 8], dtype=np.float32)
 
+
+        anchors = np.asarray([0, 0, 5, 6,
+                              5, 5, 10, 11,
+                              0, 0, 7, 6], dtype=np.float32)
+        gt = np.asarray([3, 3, 8, 8, 4, 4, 8, 8], dtype=np.float32)
         self.pos_mask = np.asarray([[-1, 1],
                                [-1, -1],
                                [1, 1]])
-
         self.norm_anchors = normalize_anchors(anchors, gt)
         answer = ([[0.8, 0.6666667, 0.47000363, 0.2876821],
                     [-1., -1., -1., -1.],
@@ -46,7 +47,6 @@ class TestAnchors(unittest.TestCase):
 
         :return:
         """
-
         # Numpy
         indices_2d = np.where(self.pos_mask  == 1)
         indices_2d = np.stack(indices_2d, axis=0).tolist()

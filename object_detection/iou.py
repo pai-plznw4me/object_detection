@@ -10,13 +10,11 @@ def calculate_iou(flat_xyxy_bboxes, flat_xyxy_gt):
         iou: Tensor, 2D array
         array shape (N_anchor, N_gt)
     """
-
     # 1D array to 2D array
     # [x1, x2, y1, y2, x1, x2, y1, y2 ]
     # >>>
     # [[x1, x2, y1, y2],
     # [x1, x2, y1, y2]]
-
     res_sample_bboxes = tf.reshape(flat_xyxy_bboxes, shape=([-1, 4]))
     gt_sample_bboxes = tf.reshape(flat_xyxy_gt, shape=([-1, 4]))
 
@@ -60,3 +58,4 @@ def calculate_iou(flat_xyxy_bboxes, flat_xyxy_gt):
     iou = overlay_area / (expand_area_sample + area_gt - overlay_area)
 
     return iou
+
