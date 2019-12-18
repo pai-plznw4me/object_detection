@@ -1,6 +1,9 @@
+import sys
+sys.path.append('../')
 import unittest
 import numpy as np
 import tensorflow as tf
+from anchors import generate_trainble_classes
 
 
 class TestClassMask(unittest.TestCase):
@@ -16,7 +19,7 @@ class TestClassMask(unittest.TestCase):
 
         gt_classes = [2, 2, 3]
         self.mask = np.asarray(mask)
-        self.gt_classes =  np.asarray(gt_classes)
+        self.gt_classes = np.asarray(gt_classes)
         self.class_mask = self.mask * self.gt_classes
 
     def test_classmask(self):
@@ -115,3 +118,21 @@ class TestClassMask(unittest.TestCase):
                   [0, 0, 0, 1]]
 
         np.testing.assert_array_almost_equal(pred_, answer)
+
+    def test_generate_trainble_classes(self):
+        pred_classes = generate_trainble_classes(tf.constant(self.mask),
+                                                 tf.constant(self.gt_classes), 4)
+
+
+        sess = tf.Session()
+        pred_classes_ = sess.run(pred_classes)
+
+        answer = [[0, 0, 0, 1],
+                  [0, 0, 0, 1],
+                  [0, 0, 1, 0],
+                  [1, 0, 0, 0],
+                  [0, 0, 1, 0],
+                  [1, 0, 0, 0],
+                  [0, 0, 0, 1]]
+
+        np.testing.assert_array_almost_equal(answer, pred_classes_)

@@ -177,11 +177,12 @@ def generate_trainble_classes(mask, gt_classes, n_classes):
              [2 ,   2,   3]]
     """
     class_mask = mask * gt_classes
-    n_length = tf.shape(tf.constant(class_mask))[0]
+
+    n_length = tf.shape(class_mask)[0]
     background = tf.zeros(n_length, dtype=tf.int32)
     background = tf.one_hot(background, n_classes)
 
-    positive_index = tf.where(class_mask.class_mask > 0)
+    positive_index = tf.where(class_mask > 0)
     positive_value = tf.gather_nd(class_mask, positive_index)
     positive_onehot = tf.one_hot(positive_value, n_classes)
 
