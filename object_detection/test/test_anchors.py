@@ -1,8 +1,10 @@
+import sys
+sys.path.append("../")
 import unittest
-from ..normalize import normalize_anchors
-from ..anchors import generate_trainable_anchors, generate_anchor
+from normalize import normalize_anchors
+from anchors import generate_trainable_anchors, generate_anchor
 import numpy as np
-from ..datasets import sample_dataset
+from datasets import sample_dataset
 import tensorflow as tf
 
 
@@ -14,8 +16,6 @@ class TestAnchors(unittest.TestCase):
     """
     def setUp(self):
         # Test Normalization
-
-
         anchors = np.asarray([0, 0, 5, 6,
                               5, 5, 10, 11,
                               0, 0, 7, 6], dtype=np.float32)
@@ -83,7 +83,7 @@ class TestAnchors(unittest.TestCase):
         np.testing.assert_array_almost_equal(answer, d_xywh_)
 
     def test_generate_anchor_tf(self):
-        answer = generate_trainable_anchors(self.norm_anchors, self.pos_mask)
+        answer = self.answer
         trainable_anchors = generate_trainable_anchors(self.norm_anchors, self.pos_mask)
 
         sess = tf.Session()

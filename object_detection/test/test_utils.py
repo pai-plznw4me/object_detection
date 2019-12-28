@@ -1,7 +1,10 @@
+import sys
+sys.path.append('../')
 import unittest
 import tensorflow as tf
 import numpy as np
 from utils import convert_xyxy2d_to_ccwh2d, convert_ccwh4d_to_xyxy4d
+import time
 
 
 class TestAnchors(unittest.TestCase):

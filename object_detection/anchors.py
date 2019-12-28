@@ -1,9 +1,12 @@
 import numpy as np
 import tensorflow as tf
-from keras import backend as K
+from tensorflow.keras import backend as K
 
 
-def generate_anchor(input_tensor, backbone_output):
+def generate_anchor(input_tensor,
+                    backbone_output,
+                    anchor_default_sizes=(32., 64., 128.),
+                    anchor_ratio=(0.5, 1, 2)):
     """
     Description:
         Anchors 을 생성합니다
@@ -11,6 +14,8 @@ def generate_anchor(input_tensor, backbone_output):
     Args:
         :param input_tensor: Keras Layer  , 4D Tensor
         :param backbone_output: Keras Layer , 4D Tensor
+        :param anchor_default_sizes
+        :param anchor_ratio
 
         :return: anchor_grid: Tensor, 3D Tensor
     """
@@ -23,16 +28,15 @@ def generate_anchor(input_tensor, backbone_output):
     backbone_w = K.shape(backbone_output)[2]
 
     # to calculate the distance btw feature map pixels
-    pixel_gap_h = tf.ceil(input_h / backbone_h)
-    pixel_gap_w = tf.ceil(input_w / backbone_w)
+    stride_h = 2. ** tf.ceil(tf.log(input_h / backbone_h)/tf.log(2.))
+    stride_w = 2. ** tf.ceil(tf.log(input_w / backbone_w)/tf.log(2.))
 
     # generate anchor sizes
-    anchor_default_sizes = [32., 64., 128.]
-    anchor_ratio = [0.5, 1, 2]
     n_anchor_sizes = len(anchor_default_sizes) * len(anchor_ratio)
     anchor_sizes = []
     for size in anchor_default_sizes:
-        anchor_sizes.extend([[size, size], [size, size * 2], [size * 2, size]])
+        for r in anchor_ratio:
+            anchor_sizes.append([size*np.sqrt(r), size/np.sqrt(r)])
     anchor_sizes = np.asarray(anchor_sizes)
 
     # generate anchor grid
@@ -49,8 +53,8 @@ def generate_anchor(input_tensor, backbone_output):
     # shift cx ,cy
     # pixel_gap//2 은 stride 때문에 저렇게 된다.
     # pixel 간 거리는 stride 만큼 떨어져 있다.
-    cx = cx * pixel_gap_w + pixel_gap_w // 2
-    cy = cy * pixel_gap_h + pixel_gap_h // 2
+    cx = cx * stride_w + stride_w // 2
+    cy = cy * stride_h + stride_h // 2
 
     # cx 는 anchor 갯수만큼 있어서 저렇게 만든다
     grid_cx = tf.stack([cx] * n_anchor_sizes, axis=-1)
@@ -143,7 +147,7 @@ def generate_trainable_anchors(normalize_anchors, matching_mask):
     d_xywh = tf.stack([dx, dy, dw, dh], axis=-1)
 
     n_anchors = tf.shape(normalize_anchors)[0]
-    ret_anchor = tf.ones([n_anchors, 4], dtype=tf.float64) * -1
+    ret_anchor = tf.ones([n_anchors, 4], dtype=tf.float32) * -1
     ret_anchor = tf.tensor_scatter_nd_update(ret_anchor, indices, d_xywh)
     return ret_anchor
 
@@ -188,6 +192,8 @@ def generate_trainble_classes(mask, gt_classes, n_classes):
 
     indices = positive_index[:, 0]
     indices = tf.expand_dims(indices, axis=-1)
+
     pred_classes = tf.tensor_scatter_nd_update(background, indices, positive_onehot)
+
 
     return pred_classes

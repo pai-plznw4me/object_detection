@@ -5,26 +5,26 @@ from tensorflow.python.keras.layers import Input, Conv2D
 from tensorflow.python.keras.models import Model
 from tensorflow.python.keras.optimizers import SGD
 import tensorflow as tf
-from anchors import generate_anchor, generate_trainable_anchors
-from utils import convert_xyxy2d_to_ccwh2d, convert_ccwh4d_to_xyxy4d
-from normalize import normalize_anchors, denormalize
-from iou import calculate_iou
-from datasets import sample_dataset
-from matching_policy import matching_mask
-from utils import mean_iou
+from .anchors import generate_anchor, generate_trainable_anchors
+from .utils import convert_xyxy2d_to_ccwh2d, convert_ccwh4d_to_xyxy4d
+from .normalize import normalize_anchors, denormalize
+from .iou import calculate_iou
+from .datasets import sample_dataset
+from .matching_policy import matching_mask
+from .utils import mean_iou
 import tensorflow.python.keras.backend as K
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
 
 
-inputs = Input(shape=(None, None, 3), name='images')
-backbone_layer = ResNet50(weights='imagenet', input_shape=(None, None, 3), include_top=False)(inputs)
+resnet = ResNet50(weights='imagenet', input_shape=(None, None, 3), include_top=False)
+inputs = resnet.inputs
 
 # convolution for regression
 n_anchor = 9
 n_reg = 4
-layer = Conv2D(filters=128, activation='relu', kernel_size=3, padding='same')(backbone_layer)
+layer = Conv2D(filters=128, activation='relu', kernel_size=3, padding='same')(resnet.outputs)
 layer = Conv2D(filters=256, activation='relu', kernel_size=3, padding='same')(layer)
 layer = Conv2D(filters=n_anchor * n_reg, activation='linear', kernel_size=3, padding='same')(layer)
 

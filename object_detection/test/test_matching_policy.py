@@ -1,5 +1,5 @@
 import unittest
-from matching_policy import matching_mask, matching_mask_tf
+from ..matching_policy import matching_mask
 import numpy as np
 import numpy.random as npr
 import tensorflow as tf
@@ -52,7 +52,7 @@ class TestMatchingPolicy(unittest.TestCase):
         np.testing.assert_array_almost_equal(self.answer, self.matcing_mask)
 
     def test_matching_mask_tf(self):
-        self.matcing_mask_tensor = matching_mask_tf(tf.constant(self.sample_iou, dtype=tf.float32))
+        self.matcing_mask_tensor = matching_mask(tf.constant(self.sample_iou, dtype=tf.float32))
         # best_mask, thd_mask = matching_mask_tf(tf.constant(self.sample_iou, dtype=tf.float32))
         sess = tf.Session()
         matcing_mask = sess.run(self.matcing_mask_tensor)

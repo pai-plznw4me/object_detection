@@ -104,6 +104,7 @@ class TestClassMask(unittest.TestCase):
 
         indices = positive_index[:, 0]
         indices = tf.expand_dims(indices, axis=-1)
+        print(background, indices, positive_onehot)
         pred = tf.tensor_scatter_nd_update(background, indices, positive_onehot)
 
         sess = tf.Session()
@@ -120,6 +121,7 @@ class TestClassMask(unittest.TestCase):
         np.testing.assert_array_almost_equal(pred_, answer)
 
     def test_generate_trainble_classes(self):
+        print(tf.constant(self.mask), tf.constant(self.gt_classes))
         pred_classes = generate_trainble_classes(tf.constant(self.mask),
                                                  tf.constant(self.gt_classes), 4)
 
